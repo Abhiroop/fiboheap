@@ -1,6 +1,6 @@
 module Fibo where
 
--- | A circular doubly linked list.
+-- | A circular doubly linked list representes like Okasaki's lazy queues.
 
 --               anti-clockwise
 --                    |
