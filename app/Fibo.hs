@@ -27,6 +27,9 @@ goLeft (Wheel (x:xs) head cw) = Wheel xs x (head : cw)
 -- | Move the head one place clockwise.
 -- Amortized O(1)
 goRight :: Wheel a -> Wheel a
+goRight (Wheel [] head []) = error "Heap too small"
+goRight (Wheel acw head [])
+  = Wheel [head] (last acw) (drop 1 (reverse acw))
 goRight (Wheel acw head (x:xs)) = Wheel (head : acw) x xs
 
 -- | insert a new element into a wheel, it will be the new head and shift right
@@ -34,10 +37,12 @@ goRight (Wheel acw head (x:xs)) = Wheel (head : acw) x xs
 insertW :: a -> Wheel a -> Wheel a
 insertW x (Wheel acw head cw) = Wheel acw x (head : cw)
 
--- | deletes the head of the wheel and returns it
--- O(1)
+-- | deletes the head of the wheel and returns it and makes the right most element the head
+-- Amortized O(1)
 extractW :: Wheel a -> (a, Wheel a)
-extractW (Wheel acw head (x:xs)) = (x, Wheel acw head xs)
+extractW (Wheel acw head [])
+  = (head , Wheel [] (last acw) (drop 1 (reverse acw)))
+extractW (Wheel acw head (x:xs)) = (head, Wheel acw x xs)
 
 -- | concatenate two wheels
 -- O(n)
