@@ -17,12 +17,15 @@ readW :: Wheel a -> a
 readW (Wheel _ head _) = head
 
 -- | Move the head one place counter clockwise.
--- O(1)
+-- Amortized O(1)
 goLeft :: Wheel a -> Wheel a
+goLeft (Wheel [] head []) = error "Heap too small"
+goLeft (Wheel [] head cw)
+  = Wheel (drop 1 (reverse cw)) (last cw) [head]
 goLeft (Wheel (x:xs) head cw) = Wheel xs x (head : cw)
 
 -- | Move the head one place clockwise.
--- O(1)
+-- Amortized O(1)
 goRight :: Wheel a -> Wheel a
 goRight (Wheel acw head (x:xs)) = Wheel (head : acw) x xs
 
