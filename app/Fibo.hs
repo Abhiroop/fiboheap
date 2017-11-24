@@ -49,3 +49,6 @@ extractW (Wheel acw head (x:xs)) = (head, Wheel acw x xs)
 concatW :: Wheel a -> Wheel a -> Wheel a
 concatW (Wheel acw head cw) (Wheel acw' head' cw') =
   Wheel ((head' : cw') ++ (reverse acw')) head (cw ++ (reverse acw))
+
+-- | The fibonacci heap is a recursive structure with a root wheel, its degree and associated subheaps
+data FibHeap a = FibHeap (Wheel (a, Int, FibHeap a))
