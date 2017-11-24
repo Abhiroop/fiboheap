@@ -50,7 +50,7 @@ extractW (Wheel acw head [])
 extractW (Wheel acw head (x:xs)) = (head, Wheel acw x xs)
 
 -- | concatenate two wheels
--- O(n)
+-- Amortized O(1) because the reverse loads a thunk
 concatW :: Wheel a -> Wheel a -> Wheel a
 concatW w EmptyWheel = w
 concatW EmptyWheel w = w
@@ -72,18 +72,28 @@ empty :: FibHeap a
 empty = FibHeap EmptyWheel
 
 -- | The minimum element at the top of the heap
+-- O(1)
 minimum :: FibHeap a -> a
 minimum (FibHeap EmptyWheel) = error "No elements in heap"
 minimum (FibHeap (Wheel _ (x, _, _) _ )) = x
 
 -- | Inset a new value onto the heap
-insert :: a -> FibHeap a -> FibHeap a
-insert = undefined
+-- Amortized O(1)
+insert :: Ord a => a -> FibHeap a -> FibHeap a
+insert x (FibHeap EmptyWheel) = FibHeap (Wheel [] (x, 0, empty)[])
+insert x (FibHeap (Wheel acw n@(head, _, _) cw))
+  | x < head  = FibHeap (Wheel acw (x, 0, empty) (n : cw))
+  | otherwise = FibHeap $ goRight (Wheel acw (x,0,empty) (n : cw))
 
 -- | Union of 2 heaps
-union :: FibHeap a -> FibHeap a -> FibHeap a
-union = undefined
+-- Amortized O(1)
+union :: Ord a => FibHeap a -> FibHeap a -> FibHeap a
+union (FibHeap EmptyWheel) (FibHeap w) = FibHeap w
+union (FibHeap w) (FibHeap EmptyWheel) = FibHeap w
+union (FibHeap w1@(Wheel _ (h, _, _) _)) (FibHeap w2@(Wheel _ (h', _, _) _))
+  | h < h'    = FibHeap $ concatW w1 w2
+  | otherwise = FibHeap $ concatW w2 w1
 
 -- | Extracting the minimum element of the heap
 extractMin :: FibHeap a -> (a, FibHeap a)
-extractMin = undefined
+extractMin (FibHeap EmptyWheel) = error "Heap contains no elements"
