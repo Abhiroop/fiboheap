@@ -48,4 +48,4 @@ extractW (Wheel acw head (x:xs)) = (head, Wheel acw x xs)
 -- O(n)
 concatW :: Wheel a -> Wheel a -> Wheel a
 concatW (Wheel acw head cw) (Wheel acw' head' cw') =
-  Wheel ((head' : cw') ++ acw) head (cw ++ acw)
+  Wheel ((head' : cw') ++ (reverse acw')) head (cw ++ (reverse acw))
