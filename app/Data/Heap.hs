@@ -1,4 +1,4 @@
-module Fibo where
+module Data.Heap where
 
 -- | A circular doubly linked list represented like Okasaki's lazy queues.
 
@@ -52,3 +52,11 @@ concatW (Wheel acw head cw) (Wheel acw' head' cw') =
 
 -- | The fibonacci heap is a recursive structure with a root wheel, its degree and associated subheaps
 data FibHeap a = FibHeap (Wheel (a, Int, FibHeap a))
+
+-- | The empty fibonacci heap
+empty :: FibHeap a
+empty = undefined
+
+-- | The minimum element at the top of the heap
+minimum :: FibHeap a -> a
+minimum = undefined
