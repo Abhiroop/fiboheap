@@ -60,3 +60,15 @@ empty = undefined
 -- | The minimum element at the top of the heap
 minimum :: FibHeap a -> a
 minimum = undefined
+
+-- | Inset a new value onto the heap
+insert :: a -> FibHeap a -> FibHeap a
+insert = undefined
+
+-- | Union of 2 heaps
+union :: FibHeap a -> FibHeap a -> FibHeap a
+union = undefined
+
+-- | Extracting the minimum element of the heap
+extractMin :: FibHeap a -> (a, FibHeap a)
+extractMin = undefined
