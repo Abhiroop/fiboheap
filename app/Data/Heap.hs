@@ -122,7 +122,9 @@ insNode n@(a,_,_) w@(Wheel _ (h,_,_) _)
   | otherwise = goRight $ insertW n w
 
 makeDA :: Wheel (Node a) -> IMap.IntMap (Node a)
-makeDA = undefined
+makeDA EmptyWheel = IMap.empty
+makeDA w          = let (n, w') = extractW w
+                     in insDA n (makeDA w')
 
 insDA :: Node a -> IMap.IntMap (Node a) -> IMap.IntMap (Node a)
 insDA = undefined
