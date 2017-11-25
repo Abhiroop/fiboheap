@@ -1,6 +1,14 @@
-module Data.Heap where
+module Data.Heap
+     ( FibHeap
+     , empty
+     , minimum
+     , insert
+     , union
+     , extractMin
+     ) where
 
 import qualified Data.IntMap.Lazy as IMap
+import Prelude hiding (minimum)
 
 -- | A circular doubly linked list represented like Okasaki's lazy queues.
 
