@@ -14,5 +14,5 @@ Purely functional fibonacci heaps
 
 - [ ] Add a Foldable instance
 - [ ] Add a Typeable instance
-- [ ] Add build rules to speed up
+- [ ] Add inlining pragmas to speed up
 - [ ] Add performance benchmarks
