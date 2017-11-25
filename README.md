@@ -12,7 +12,7 @@ Purely functional fibonacci heaps
 
 ### TODO
 
-- [ ] Add a Foldable instance
+- [X] Add a Foldable instance
 - [ ] Add a Typeable instance
 - [ ] Add inlining pragmas to speed up
 - [ ] Add performance benchmarks

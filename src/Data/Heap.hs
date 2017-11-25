@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveFoldable #-}
+{-# LANGUAGE StandaloneDeriving #-}
 module Data.Heap
      ( FibHeap
      , empty
@@ -20,6 +22,7 @@ data Wheel a = Wheel [a] a [a] | EmptyWheel deriving Show
 --                          |
 --                       clockwise
 
+deriving instance Foldable Wheel
 
 -- | Returns the head of the wheel.
 -- O(1)
@@ -81,6 +84,8 @@ type Node a = (a, Int, FibHeap a)
 --             |          |
 --            key         |
 --                 associated sub heap
+
+deriving instance Foldable FibHeap
 
 -- | The empty fibonacci heap
 empty :: FibHeap a
