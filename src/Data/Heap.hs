@@ -22,7 +22,9 @@ data Wheel a = Wheel [a] a [a] | EmptyWheel deriving Show
 --                          |
 --                       clockwise
 
-deriving instance Foldable Wheel
+instance Foldable Wheel where
+  foldMap f EmptyWheel = mempty
+  foldMap f (Wheel acw head cw) = undefined
 
 -- | Returns the head of the wheel.
 -- O(1)
