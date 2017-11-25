@@ -7,7 +7,7 @@ import qualified Data.IntMap.Lazy as IMap
 --               anti-clockwise
 --                    |
 --                    v
-data Wheel a = Wheel [a] a [a] | EmptyWheel
+data Wheel a = Wheel [a] a [a] | EmptyWheel deriving Show
 --                          ^
 --                          |
 --                       clockwise
@@ -61,7 +61,7 @@ concatW (Wheel acw head cw) (Wheel acw' head' cw') =
 
 -- | The fibonacci heap is a recursive structure with a root wheel, its degree and associated subheaps
 
-data FibHeap a = FibHeap (Wheel (Node a))
+data FibHeap a = FibHeap (Wheel (Node a)) deriving Show
 
 --         degree of the wheel
 --                 |
@@ -102,7 +102,7 @@ union (FibHeap w1@(Wheel _ (h, _, _) _)) (FibHeap w2@(Wheel _ (h', _, _) _))
 
 -- | Extracting the minimum element of the heap
 
--- Assumption: When we are concatenating order of w' and w'' doesn't matter because consolidation takes care of marking the min
+-- The trick: When we are concatenating order of w' and w'' doesn't matter because consolidation takes care of marking the min
 extractMin :: Ord a => FibHeap a -> (a, FibHeap a)
 extractMin (FibHeap EmptyWheel) = error "Heap contains no elements"
 extractMin (FibHeap (Wheel [] (x, _, h) [])) = (x,h)
@@ -121,13 +121,15 @@ insNode n@(a,_,_) w@(Wheel _ (h,_,_) _)
   | a <= h = insertW n w
   | otherwise = goRight $ insertW n w
 
-makeDA :: Wheel (Node a) -> IMap.IntMap (Node a)
+makeDA :: Ord a => Wheel (Node a) -> IMap.IntMap (Node a)
 makeDA EmptyWheel = IMap.empty
 makeDA w          = let (n, w') = extractW w
                      in insDA n (makeDA w')
 
-insDA :: Node a -> IMap.IntMap (Node a) -> IMap.IntMap (Node a)
-insDA = undefined
+insDA :: Ord a => Node a -> IMap.IntMap (Node a) -> IMap.IntMap (Node a)
+insDA n@(_,d,_) m = IMap.insertWith linkDA d n m
 
-linkDA :: Node a -> Node a -> Node a
-linkDA = undefined
+linkDA :: Ord a => Node a -> Node a -> Node a
+linkDA n@(a,d,(FibHeap w)) n'@(a',d',(FibHeap w'))
+  | a < a'    = (a , d+1, FibHeap $ insertW n' w)
+  | otherwise = (a', d+1, FibHeap $ insertW n w')
