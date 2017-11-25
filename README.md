@@ -10,3 +10,9 @@ Purely functional fibonacci heaps
 | union         | O(1).Amortized|
 | extractMin    | O(log n).Amortized|
 
+### TODO
+
+- [ ] Add a Foldable instance
+- [ ] Add a Typeable instance
+- [ ] Add build rules to speed up
+- [ ] Add performance benchmarks
