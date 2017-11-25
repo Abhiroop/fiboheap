@@ -1,5 +1,7 @@
 module Data.Heap where
 
+import qualified Data.IntMap.Lazy as IMap
+
 -- | A circular doubly linked list represented like Okasaki's lazy queues.
 
 --               anti-clockwise
@@ -58,14 +60,18 @@ concatW (Wheel acw head cw) (Wheel acw' head' cw') =
   Wheel ((head' : cw') ++ (reverse acw')) head (cw ++ (reverse acw))
 
 -- | The fibonacci heap is a recursive structure with a root wheel, its degree and associated subheaps
---                           degree of the wheel
---                                   |
---                                   v
-data FibHeap a = FibHeap (Wheel (a, Int, FibHeap a))
---                               ^          ^
---                               |          |
---                              key         |
---                                   associated sub heap
+
+data FibHeap a = FibHeap (Wheel (Node a))
+
+--         degree of the wheel
+--                 |
+--                 v
+
+type Node a = (a, Int, FibHeap a)
+--             ^          ^
+--             |          |
+--            key         |
+--                 associated sub heap
 
 -- | The empty fibonacci heap
 empty :: FibHeap a
@@ -95,5 +101,31 @@ union (FibHeap w1@(Wheel _ (h, _, _) _)) (FibHeap w2@(Wheel _ (h', _, _) _))
   | otherwise = FibHeap $ concatW w2 w1
 
 -- | Extracting the minimum element of the heap
-extractMin :: FibHeap a -> (a, FibHeap a)
+
+-- Assumption: When we are concatenating order of w' and w'' doesn't matter because consolidation takes care of marking the min
+extractMin :: Ord a => FibHeap a -> (a, FibHeap a)
 extractMin (FibHeap EmptyWheel) = error "Heap contains no elements"
+extractMin (FibHeap (Wheel [] (x, _, h) [])) = (x,h)
+extractMin (FibHeap w) = let ((x,_, (FibHeap w'')), w') = extractW w
+                           in (x, consolidate $ FibHeap $ concatW w' w'')
+
+consolidate :: Ord a => FibHeap a -> FibHeap a
+consolidate (FibHeap w) = FibHeap $ wheelDA $ makeDA w
+
+wheelDA :: Ord a => IMap.IntMap (Node a) -> Wheel (Node a)
+wheelDA m = foldr insNode EmptyWheel m
+
+insNode :: Ord a => Node a -> Wheel (Node a) -> Wheel (Node a)
+insNode n EmptyWheel = insertW n EmptyWheel
+insNode n@(a,_,_) w@(Wheel _ (h,_,_) _)
+  | a <= h = insertW n w
+  | otherwise = goRight $ insertW n w
+
+makeDA :: Wheel (Node a) -> IMap.IntMap (Node a)
+makeDA = undefined
+
+insDA :: Node a -> IMap.IntMap (Node a) -> IMap.IntMap (Node a)
+insDA = undefined
+
+linkDA :: Node a -> Node a -> Node a
+linkDA = undefined
