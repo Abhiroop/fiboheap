@@ -92,6 +92,15 @@ type Node a = (a, Int, FibHeap a)
 -- FIXME: Manually write the foldable instance
 deriving instance Foldable FibHeap
 
+-- FIXME: An incorrect Foldable instance. Is it possible to have a generic fold for this?
+-- instance Foldable FibHeap where
+--   foldMap f (FibHeap EmptyWheel) = mempty
+--   foldMap f (FibHeap (Wheel acw (a,_,h) cw))
+--     = f a         `mappend`
+--       foldMap f h `mappend`
+--       (mconcat $ fmap (\(a',_,h') -> f a' `mappend` foldMap f h') cw) `mappend`
+--       (mconcat $ fmap (\(a'',_,h'') -> f a'' `mappend` foldMap f h'') (reverse acw))
+
 -- | The empty fibonacci heap
 empty :: FibHeap a
 empty = FibHeap EmptyWheel
