@@ -135,7 +135,7 @@ union (FibHeap w1@(Wheel _ (h, _, _) _)) (FibHeap w2@(Wheel _ (h', _, _) _))
 -- O(log n)
 extractMin :: Ord a => FibHeap a -> Maybe (a, FibHeap a)
 extractMin (FibHeap EmptyWheel) = Nothing
-extractMin (FibHeap (Wheel [] (x, _, h) [])) = Just (x,h)
+extractMin (FibHeap (Wheel [] (x, _, h) [])) = Just (x,consolidate h)
 extractMin (FibHeap w) = let ((x,_, (FibHeap w'')), w') = extractW w
                            in Just (x, consolidate $ FibHeap $ concatW w' w'')
 
