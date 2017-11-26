@@ -24,7 +24,7 @@ data Wheel a = Wheel [a] a [a] | EmptyWheel deriving Show
 
 instance Foldable Wheel where
   foldMap f EmptyWheel = mempty
-  foldMap f (Wheel acw head cw) = f head              `mappend`
+  foldMap f (Wheel acw head cw) = f head                `mappend`
                                   (mconcat $ fmap f cw) `mappend`
                                   (mconcat $ fmap f (reverse acw))
 
