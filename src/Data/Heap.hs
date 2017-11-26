@@ -24,7 +24,9 @@ data Wheel a = Wheel [a] a [a] | EmptyWheel deriving Show
 
 instance Foldable Wheel where
   foldMap f EmptyWheel = mempty
-  foldMap f (Wheel acw head cw) = undefined
+  foldMap f (Wheel acw head cw) = f head              `mappend`
+                                  (mconcat $ fmap f cw) `mappend`
+                                  (mconcat $ fmap f (reverse acw))
 
 -- | Returns the head of the wheel.
 -- O(1)
@@ -87,6 +89,7 @@ type Node a = (a, Int, FibHeap a)
 --            key         |
 --                 associated sub heap
 
+-- FIXME: Manually write the foldable instance
 deriving instance Foldable FibHeap
 
 -- | The empty fibonacci heap
@@ -95,9 +98,9 @@ empty = FibHeap EmptyWheel
 
 -- | The minimum element at the top of the heap
 -- O(1)
-minimum :: FibHeap a -> a
-minimum (FibHeap EmptyWheel) = error "No elements in heap"
-minimum (FibHeap (Wheel _ (x, _, _) _ )) = x
+minimum :: FibHeap a -> Maybe a
+minimum (FibHeap EmptyWheel) = Nothing
+minimum (FibHeap (Wheel _ (x, _, _) _ )) = Just x
 
 -- | Inset a new value onto the heap
 -- Amortized O(1)
@@ -121,11 +124,11 @@ union (FibHeap w1@(Wheel _ (h, _, _) _)) (FibHeap w2@(Wheel _ (h', _, _) _))
 
 -- | Extracting the minimum element of the heap
 -- O(log n)
-extractMin :: Ord a => FibHeap a -> (a, FibHeap a)
-extractMin (FibHeap EmptyWheel) = error "Heap contains no elements"
-extractMin (FibHeap (Wheel [] (x, _, h) [])) = (x,h)
+extractMin :: Ord a => FibHeap a -> Maybe (a, FibHeap a)
+extractMin (FibHeap EmptyWheel) = Nothing
+extractMin (FibHeap (Wheel [] (x, _, h) [])) = Just (x,h)
 extractMin (FibHeap w) = let ((x,_, (FibHeap w'')), w') = extractW w
-                           in (x, consolidate $ FibHeap $ concatW w' w'')
+                           in Just (x, consolidate $ FibHeap $ concatW w' w'')
 
 -- | Convert root wheel to DA and translate DA to wheel finally
 consolidate :: Ord a => FibHeap a -> FibHeap a
